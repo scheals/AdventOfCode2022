@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 strategy = File.readlines('./input.txt', "\n", chomp: true)
 # # Y beats A paper vs rock
 # # Z beats B scissors vs paper
@@ -52,11 +54,12 @@ end
 
 class Rock
   def wins?(enemy_sign)
-    if enemy_sign.is_a?(Rock)
+    case enemy_sign
+    when Rock
       nil
-    elsif enemy_sign.is_a?(Paper)
+    when Paper
       false
-    elsif enemy_sign.is_a?(Scissors)
+    when Scissors
       true
     end
   end
@@ -66,14 +69,14 @@ class Rock
   end
 end
 
-
 class Paper
   def wins?(enemy_sign)
-    if enemy_sign.is_a?(Rock)
+    case enemy_sign
+    when Rock
       true
-    elsif enemy_sign.is_a?(Paper)
+    when Paper
       nil
-    elsif enemy_sign.is_a?(Scissors)
+    when Scissors
       false
     end
   end
@@ -83,14 +86,14 @@ class Paper
   end
 end
 
-
 class Scissors
   def wins?(enemy_sign)
-    if enemy_sign.is_a?(Rock)
+    case enemy_sign
+    when Rock
       false
-    elsif enemy_sign.is_a?(Paper)
+    when Paper
       true
-    elsif enemy_sign.is_a?(Scissors)
+    when Scissors
       nil
     end
   end
@@ -119,7 +122,9 @@ class SecondRPSMatch < RPSMatch
     when 'X' # lose
       choices.push([Rock.new, Paper.new, Scissors.new].find { |choice| enemy_choice.wins?(choice) })
     when 'Z' # win
-      choices.push([Rock.new, Paper.new, Scissors.new].find { |choice| !enemy_choice.wins?(choice) && !enemy_choice.wins?(choice).nil?  })
+      choices.push([Rock.new, Paper.new, Scissors.new].find do |choice|
+                     !enemy_choice.wins?(choice) && !enemy_choice.wins?(choice).nil?
+                   end)
     end
 
     choices
