@@ -107,3 +107,37 @@ end
 
 p matches
 puts matches.sum # 13005
+
+class SecondRPSMatch < RPSMatch
+  def choice_translator(enemy_sign, my_sign)
+    choices = []
+    enemy_choice = translate_enemy(enemy_sign)
+    choices.push(enemy_choice)
+
+    case my_sign
+    when 'Y' then choices.push(enemy_choice)
+    when 'X' # lose
+      choices.push([Rock.new, Paper.new, Scissors.new].find { |choice| enemy_choice.wins?(choice) })
+    when 'Z' # win
+      choices.push([Rock.new, Paper.new, Scissors.new].find { |choice| !enemy_choice.wins?(choice) && !enemy_choice.wins?(choice).nil?  })
+    end
+
+    choices
+  end
+
+  def translate_enemy(sign)
+    case sign
+    when 'A' then Rock.new
+    when 'B' then Paper.new
+    when 'C' then Scissors.new
+    end
+  end
+end
+
+second_matches = strategy.map do |match|
+  sides = match.split
+  SecondRPSMatch.new(sides.first, sides.last).play_match
+end
+
+p second_matches
+puts second_matches.sum # 11373
