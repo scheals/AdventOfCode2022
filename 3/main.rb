@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 rucksacks = File.readlines(*ARGV, chomp: true)
 # split into compartments
 
