@@ -30,3 +30,22 @@ end
 
 p sums_of_priorities.sum # 8243
 
+# find the squads
+
+elf_squads = []
+rucksacks.each_slice(3) { |squad| elf_squads.push(squad) }
+
+p elf_squads
+
+# find the badges
+
+badges = elf_squads.map do |squad|
+  split_squad_rucksacks = squad.map(&:chars)
+  split_squad_rucksacks.first.intersection(split_squad_rucksacks[1], split_squad_rucksacks.last)
+end
+
+p badges
+
+# calculate the badges
+
+p badges.flatten.map(&LETTER_VALUES).sum # 2631
