@@ -12,3 +12,4 @@ p rangefied_pairs
 
 p rangefied_pairs.select { |pair| pair.first.cover?(pair.last) || pair.last.cover?(pair.first) }.length # 515
 
+p rangefied_pairs.map { |pair| pair.map(&:to_a) }.reject { |pair| pair.first.intersection(pair.last).empty? }.length # 883
