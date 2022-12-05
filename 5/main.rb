@@ -30,14 +30,24 @@ end
 
 transformed_moves = string_moves.map { |move| Move.parse(move) }
 
+# p1 solution:
+# transformed_moves.each do |move|
+#   (move.amount).times do
+#     target_stack = ship_stacks[move.target - 1]
+#     start_stack = ship_stacks[move.start - 1]
+#     target_stack.push(start_stack.pop)
+#   end
+# end
+
+# p1 = []
+# ship_stacks.each { |stack| p1.push(stack.last) }
+# puts p1.join # QPJPLMNNR
+
 transformed_moves.each do |move|
-  (move.amount).times do
-    target_stack = ship_stacks[move.target - 1]
-    start_stack = ship_stacks[move.start - 1]
-    target_stack.push(start_stack.pop)
-  end
+  ship_stacks[move.target - 1].push(ship_stacks[move.start - 1].pop(move.amount))
+  ship_stacks[move.target - 1].flatten!
 end
 
-p1 = []
-ship_stacks.each { |stack| p1.push(stack.last) }
-puts p1.join # QPJPLMNNR
+p2 = []
+ship_stacks.each { |stack| p2.push(stack.last) }
+puts p2.join
