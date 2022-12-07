@@ -13,10 +13,6 @@ class Item
     @name = name
     @size = size
   end
-
-  def to_s
-    "#{size} #{name}"
-  end
 end
 
 class Directory
@@ -37,10 +33,6 @@ class Directory
     end
     result.map(&:to_i).sum
   end
-
-  def to_s
-    "#{name}"
-  end
 end
 
 class FileSystem
@@ -54,9 +46,8 @@ class FileSystem
   def parse(input)
     @pwd = root
 
-    input.each_with_index do |line, i|
+    input.each do |line|
       if a_command?(line) && line.include?('cd')
-        raise 'Something went wrong...' if pwd != root && pwd.nil? || pwd.parent.nil? && line.include?('..')
         @pwd = parse_cd(line)
       elsif !a_command?(line)
         @pwd.contents << parse_contents(line)
@@ -72,7 +63,6 @@ class FileSystem
 
   def parse_cd(line)
     return root if line.include?('/')
-    raise 'Something went wrong...' if pwd != root && pwd.nil? || pwd.parent.nil? && line.include?('..')
     return pwd.parent if line.include?('..')
 
     find_dir(line.split(' ').last).find { |dir| dir.parent == pwd } || create_dir(line)
@@ -115,12 +105,11 @@ end
 
 p1_file_system = FileSystem.new
 p1_file_system.parse(input)
-p p1_file_system.dirs.filter_map { |dir| dir.size if dir.size <= 100_000 }.sum # 1432936
+p p1_file_system.dirs.filter_map { |dir| dir.size if dir.size <= 100_000 }.sum # p1 1432936
 
 entire_space = 70_000_000
 required_free_space = 30_000_000
 used_space = entire_space - p1_file_system.root.size
 space_to_free = required_free_space - used_space
-puts space_to_free
-p2 = p1_file_system.dirs.select { |dir| dir.size >= 268_565 }.sort_by { |dir| dir.size }.first
-p p2.size # 272298
+
+p p1_file_system.dirs.select { |dir| dir.size >= space_to_free }.min_by(&:size).size # p2 272298
