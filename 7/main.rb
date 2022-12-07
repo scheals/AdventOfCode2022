@@ -116,3 +116,11 @@ end
 p1_file_system = FileSystem.new
 p1_file_system.parse(input)
 p p1_file_system.dirs.filter_map { |dir| dir.size if dir.size <= 100_000 }.sum # 1432936
+
+entire_space = 70_000_000
+required_free_space = 30_000_000
+used_space = entire_space - p1_file_system.root.size
+space_to_free = required_free_space - used_space
+puts space_to_free
+p2 = p1_file_system.dirs.select { |dir| dir.size >= 268_565 }.sort_by { |dir| dir.size }.first
+p p2.size # 272298
