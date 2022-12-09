@@ -1,6 +1,3 @@
-input = File.readlines('./input.txt', chomp: true)
-p input
-
 class NodePlane
   attr_reader :nodes, :head, :tail
 
@@ -19,6 +16,7 @@ class NodePlane
     @nodes = [starting_node]
     @head = Head.new(starting_node)
     @tail = Tail.new(starting_node)
+    starting_node.contents.push(head, tail)
   end
 
   def find(coordinate)
@@ -28,12 +26,14 @@ class NodePlane
   def move(direction, amount)
     amount.times do
       move_head(direction)
-      catchup unless tail.current_node.adjacent?(head.current_node) || tail.current_node.contents.include?(head)
+      unless tail.current_node.adjacent?(head.current_node) || tail.current_node.contents.include?(head)
+        catchup
+      end
     end
   end
 
-  def navigate_to_node(traveller, direction)
-    new_coordinate = traveller.current_node.coordinate.send(direction)
+  def navigate_to_node(direction)
+    new_coordinate = head.current_node.coordinate.send(direction)
     existing_node = find(new_coordinate)
     return existing_node if existing_node
 
@@ -44,13 +44,15 @@ class NodePlane
 
   def move_head(direction)
     head.current_node.contents.delete(head)
-    head.current_node = navigate_to_node(head, direction)
+    head.current_node = navigate_to_node(direction)
     head.last_move = direction
     head.current_node.contents.push(head)
   end
 
   def catchup
-    new_destination = navigate_to_node(tail, REVERSE_DIRECTIONS[head.last_move])
+    new_destination = navigate_to_node(REVERSE_DIRECTIONS[head.last_move])
+    tail.current_node.contents.delete(tail)
+    tail.current_node.contents.push(tail)
     tail.current_node = new_destination
     tail.visited_nodes << new_destination
   end
@@ -136,7 +138,9 @@ class Tail
   end
 end
 
+input = File.readlines(ARGV[0], chomp: true)
 space = NodePlane.new
 space.parse_input(input)
 p1 = space.tail.visited_nodes.uniq.length
-puts p1
+puts p1 # 6406
+
