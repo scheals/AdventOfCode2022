@@ -25,7 +25,7 @@ class NodePlane
 
   def move(direction, amount)
     amount.times do
-      move_head(direction)
+      head.move(navigate_to_node(direction), direction)
       unless tail.current_node.adjacent?(head.current_node) || tail.current_node.contents.include?(head)
         catchup
       end
@@ -40,13 +40,6 @@ class NodePlane
     fresh_node = Node.new(new_coordinate)
     nodes << fresh_node
     fresh_node
-  end
-
-  def move_head(direction)
-    head.current_node.contents.delete(head)
-    head.current_node = navigate_to_node(direction)
-    head.last_move = direction
-    head.current_node.contents.push(head)
   end
 
   def catchup
@@ -122,6 +115,13 @@ class Head
     @current_node = current_node
     @last_move = nil
   end
+
+  def move(node, direction)
+    current_node.contents.delete(self)
+    @current_node = node
+    @last_move = direction
+    current_node.contents.push(self)
+  end
 end
 
 class Tail
@@ -143,4 +143,3 @@ space = NodePlane.new
 space.parse_input(input)
 p1 = space.tail.visited_nodes.uniq.length
 puts p1 # 6406
-
