@@ -15,7 +15,7 @@ class NodePlane
     starting_node = Node.new(Coordinate.new(0, 0))
     @nodes = [starting_node]
     @head = Head.new(starting_node)
-    @tail = Tail.new(starting_node, head)
+    @tail = Knot.new(starting_node, head)
     starting_node.contents.push(head, tail)
   end
 
@@ -116,7 +116,7 @@ class Head
   end
 end
 
-class Tail
+class Knot
   attr_reader :visited_nodes, :parent
   attr_accessor :current_node
 
