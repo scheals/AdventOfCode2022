@@ -14,7 +14,7 @@ class NodePlane
   def initialize
     starting_node = Node.new(Coordinate.new(0, 0))
     @nodes = [starting_node]
-    @head = Head.new(starting_node)
+    @head = HeadKnot.new(starting_node)
     @tail = Knot.new(starting_node, head)
     starting_node.contents.push(head, tail)
   end
@@ -100,7 +100,7 @@ class Node
   end
 end
 
-class Head
+class HeadKnot
   attr_accessor :last_move, :current_node
 
   def initialize(current_node)
@@ -114,10 +114,14 @@ class Head
     @last_move = direction
     current_node.contents.push(self)
   end
+
+  def parent
+    self
+  end
 end
 
 class Knot
-  attr_reader :visited_nodes, :parent
+  attr_reader :visited_nodes, :parent, :last_move
   attr_accessor :current_node
 
   def initialize(current_node, parent)
