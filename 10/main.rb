@@ -10,7 +10,7 @@ input = File.readlines(ARGV[0], chomp: true)
 # Find the signal strength during the 20th, 60th, 100th, 140th, 180th, and 220th cycles. What is the sum of these six signal strengths?
 
 @x_register = 1
-@cycles = []
+@cycles = [1]
 def parse_input(input)
   input.each do |line|
     @cycles.push(@x_register)
@@ -25,7 +25,7 @@ def signal_strengths(interval, amount)
   result = []
   amount.times do |i|
     cycle = 20 + interval * i
-    result << @cycles[cycle - 2] * cycle
+    result << @cycles[cycle - 1] * cycle
   end
   result
 end
@@ -33,7 +33,6 @@ end
 parse_input(input)
 p1 = signal_strengths(40, 6).sum
 puts p1 #14820
-
 
 # It seems like the X register controls the horizontal position of a sprite.
 # Specifically, the sprite is 3 pixels wide, and the X register sets the horizontal position of the middle of that sprite.
@@ -44,7 +43,7 @@ display = []
 
 @cycles.each_slice(40) do |row|
   row.each_with_index do |x_register, cycle|
-    if ((x_register - 1)..(x_register + 1)).cover?(cycle + 1)
+    if ((x_register - 1)..(x_register + 1)).cover?(cycle)
       display.push('#')
     else
       display.push('.')
