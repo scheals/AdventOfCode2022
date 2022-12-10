@@ -32,5 +32,23 @@ end
 
 parse_input(input)
 p1 = signal_strengths(40, 6).sum
-puts p1
+puts p1 #14820
 
+
+# It seems like the X register controls the horizontal position of a sprite.
+# Specifically, the sprite is 3 pixels wide, and the X register sets the horizontal position of the middle of that sprite.
+# You count the pixels on the CRT: 40 wide and 6 high. This CRT screen draws the top row of pixels left-to-right, then the row below that, and so on.
+# The left-most pixel in each row is in position 0, and the right-most pixel in each row is in position 39.
+
+display = []
+
+@cycles.each_slice(40) do |row|
+  row.each_with_index do |x_register, cycle|
+    if ((x_register - 1)..(x_register + 1)).cover?(cycle + 1)
+      display.push('#')
+    else
+      display.push('.')
+    end
+  end
+end
+puts display.join # RZEKEHFA
