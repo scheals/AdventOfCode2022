@@ -63,6 +63,40 @@ class Traveller
     result
   end
 
+  def traverse_from(beginning)
+    queue = [beginning]
+    result = []
+    until queue.empty?
+      current_position = queue.shift
+      result << current_position
+      if current_position == @target
+        result.push('Magic string!')
+        break
+      end
+
+      find_potential_moves(current_position).each { |move| queue << move }
+    end
+    result
+  end
+
+  def find_paths
+    path_lengths = []
+    starting_points = heightmap.flatten.select { |node| node.height.zero? }
+    starting_points.each do |start|
+      clear_parents
+      start.parent = "I'm the start dummy"
+      path = traverse_from(start)
+      if path.last == 'Magic string!'
+        path_lengths << find_path(path[0..-2]).length
+      end
+    end
+    path_lengths
+  end
+
+  def clear_parents
+    heightmap.flatten.map { |node| node.parent = nil }
+  end
+
   def find_potential_moves(position)
     moves = []
     MOVES.each do |move|
@@ -81,18 +115,19 @@ class Traveller
     end
     moves
   end
-end
 
-def find_path(journey)
-  path = []
-  node = journey.last
-  until node.parent == "I'm the start dummy"
-    path << node
-    node = node.parent
+  def find_path(journey)
+    path = []
+    node = journey.last
+    until node.parent == "I'm the start dummy"
+      path << node
+      node = node.parent
+    end
+    path
   end
-  path
 end
 
 input = File.readlines(ARGV[0], chomp: true).map(&:chars).map.with_index { |row, row_i| row.map.with_index { |letter, column_i| Node.new(letter, row_i, column_i) } }
 traveller = Traveller.new(input)
-p find_path(traveller.traverse).length # p1 423
+p traveller.find_path(traveller.traverse).length # p1 423
+p traveller.find_paths.min # p2 416
