@@ -1,12 +1,13 @@
 class Monkey
   attr_reader :item_worry_levels, :operation, :find_target
-  attr_accessor :throw_counter
+  attr_accessor :throw_counter, :relief_factor
 
   def initialize(item_worry_levels, operation_string, targetting_array)
     @item_worry_levels = item_worry_levels
     @operation = create_operation(operation_string)
     @find_target = create_targetting(targetting_array)
     @throw_counter = 0
+    @relief_factor = nil
   end
 
   def create_operation(rule)
@@ -35,7 +36,7 @@ class Monkey
     queue = @item_worry_levels
     until queue.empty?
       worry_level = queue.shift
-      new_worry_level = @operation.call(worry_level) / 3
+      new_worry_level = @operation.call(worry_level) / relief_factor
       target = @find_target.call(new_worry_level)
       @throw_counter += 1
       round << { item: new_worry_level, target: target }
@@ -72,8 +73,9 @@ class MonkeyBusiness
     @monkeys = monkeys
   end
 
-  def play_game
-    20.times do
+  def play_game(rounds, relief_factor)
+    monkeys.each { |monkey| monkey.relief_factor = relief_factor }
+    rounds.times do
       monkeys.each do |monkey|
         round_results = monkey.play_round
         execute_results(round_results)
@@ -89,7 +91,10 @@ class MonkeyBusiness
 end
 
 input = File.readlines(ARGV[0], "\n\n", chomp: true).map { |monkey| monkey.split("\n") }
-monkey_game = MonkeyBusiness.new(parse_input(input))
-monkey_game.play_game
-puts monkey_game.monkeys.max_by(2, &:throw_counter).map(&:throw_counter).reduce(:*) # p1 90294
+first_monkey_game = MonkeyBusiness.new(parse_input(input))
+first_monkey_game.play_game(20, 3)
+puts first_monkey_game.monkeys.max_by(2, &:throw_counter).map(&:throw_counter).reduce(:*) # p1 90294
 
+second_monkey_game = MonkeyBusiness.new(parse_input(input))
+second_monkey_game.play_game(10_000, 1)
+puts second_monkey_game.monkeys.max_by(2, &:throw_counter).map(&:throw_counter).reduce(:*)
